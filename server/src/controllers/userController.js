@@ -41,10 +41,32 @@ export async function getUser(req, res, next) {
   }
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function createUser(req, res, next) {
   try {
     const { email, name, password, user_type, address } = req.body;
-    const user = await User.create({ email, name, password, user_type, address });
+
+    if (!email || typeof email !== 'string' || !EMAIL_REGEX.test(email.trim())) {
+      return res.status(400).json({ message: '이메일 형식이 올바르지 않습니다.' });
+    }
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ message: '이름을 입력해주세요.' });
+    }
+    if (!password || typeof password !== 'string' || password.length < 6) {
+      return res.status(400).json({ message: '비밀번호는 6자 이상이어야 합니다.' });
+    }
+    if (user_type !== undefined && !['customer', 'admin'].includes(user_type)) {
+      return res.status(400).json({ message: 'user_type 값이 올바르지 않습니다.' });
+    }
+
+    const user = await User.create({
+      email: email.trim(),
+      name: name.trim(),
+      password,
+      user_type,
+      address,
+    });
     const safeUser = user.toObject();
     delete safeUser.password;
     res.status(201).json({ data: safeUser });
