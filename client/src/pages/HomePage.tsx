@@ -1,15 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useProducts } from '@/hooks/useProducts';
+import { HOME_CATEGORIES as CATEGORIES } from '@/lib/categories';
 import type { Product } from '@/types/product';
-
-const CATEGORIES = [
-  { key: 'all', label: '전체', icon: '🛒' },
-  { key: 'tv', label: 'TV', icon: '📺' },
-  { key: 'monitor', label: '모니터', icon: '🖥️' },
-  { key: 'laptop', label: '노트북', icon: '💻' },
-  { key: 'audio', label: '오디오', icon: '🎧' },
-  { key: 'home', label: '생활가전', icon: '🧺' },
-];
 
 const NEWS = [
   {
@@ -177,7 +169,7 @@ export default function HomePage() {
 
       {/* 카테고리 아이콘 행 */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-5 gap-2 md:grid-cols-10">
           {CATEGORIES.map((c) => (
             <Link
               key={c.key}

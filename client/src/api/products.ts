@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/apiClient';
-import type { Product } from '@/types/product';
+import type { CreateProductInput, Product } from '@/types/product';
 
 interface ListResponse {
   data: Product[];
@@ -19,5 +19,12 @@ export async function fetchProducts(params?: {
 
 export async function fetchProduct(id: string): Promise<Product> {
   const res = await apiClient.get<ItemResponse>(`/products/${id}`);
+  return res.data.data;
+}
+
+export async function createProduct(
+  input: CreateProductInput
+): Promise<Product> {
+  const res = await apiClient.post<ItemResponse>('/products', input);
   return res.data.data;
 }

@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '@/components/Layout';
+import AdminLayout from '@/components/AdminLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import HomePage from '@/pages/HomePage';
 import ProductsPage from '@/pages/ProductsPage';
@@ -9,6 +10,9 @@ import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import PasswordResetRequestPage from '@/pages/PasswordResetRequestPage';
 import PasswordResetConfirmPage from '@/pages/PasswordResetConfirmPage';
 import AdminPage from '@/pages/AdminPage';
+import AdminProductsPage from '@/pages/AdminProductsPage';
+import AdminProductRegisterPage from '@/pages/AdminProductRegisterPage';
+import AdminOrdersPage from '@/pages/AdminOrdersPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -23,15 +27,21 @@ export const router = createBrowserRouter([
       { path: 'verify-email', Component: VerifyEmailPage },
       { path: 'password-reset', Component: PasswordResetRequestPage },
       { path: 'password-reset/confirm', Component: PasswordResetConfirmPage },
-      {
-        path: 'admin',
-        element: (
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminPage />
-          </ProtectedRoute>
-        ),
-      },
       { path: '*', Component: NotFoundPage },
+    ],
+  },
+  {
+    path: '/admin',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { index: true, Component: AdminPage },
+      { path: 'products', Component: AdminProductsPage },
+      { path: 'products/new', Component: AdminProductRegisterPage },
+      { path: 'orders', Component: AdminOrdersPage },
     ],
   },
 ]);
