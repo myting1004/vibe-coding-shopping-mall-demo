@@ -8,6 +8,7 @@ import LoginPage from '@/pages/LoginPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import PasswordResetRequestPage from '@/pages/PasswordResetRequestPage';
 import PasswordResetConfirmPage from '@/pages/PasswordResetConfirmPage';
+import AdminPage from '@/pages/AdminPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -22,6 +23,14 @@ export const router = createBrowserRouter([
       { path: 'verify-email', Component: VerifyEmailPage },
       { path: 'password-reset', Component: PasswordResetRequestPage },
       { path: 'password-reset/confirm', Component: PasswordResetConfirmPage },
+      {
+        path: 'admin',
+        element: (
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminPage />
+          </ProtectedRoute>
+        ),
+      },
       { path: '*', Component: NotFoundPage },
     ],
   },
