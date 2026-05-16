@@ -6,13 +6,14 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/userController.js';
+import { requireAuth, requireRole } from '../middlewares/auth.js';
 
 const router = Router();
 
-router.get('/', listUsers);
-router.post('/', createUser);
-router.get('/:id', getUser);
-router.patch('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.get('/', requireAuth, requireRole('admin'), listUsers);
+router.post('/', requireAuth, requireRole('admin'), createUser);
+router.get('/:id', requireAuth, getUser);
+router.patch('/:id', requireAuth, updateUser);
+router.delete('/:id', requireAuth, requireRole('admin'), deleteUser);
 
 export default router;

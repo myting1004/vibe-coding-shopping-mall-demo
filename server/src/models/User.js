@@ -20,6 +20,14 @@ const userSchema = new mongoose.Schema(
       index: true,
     },
     address: { type: String, default: '' },
+    failedLoginAttempts: { type: Number, default: 0 },
+    lockedUntil: { type: Date, default: null },
+    lastLoginAt: { type: Date, default: null },
+    emailVerified: { type: Boolean, default: false },
+    emailVerificationTokenHash: { type: String, default: null, index: true },
+    emailVerificationExpiresAt: { type: Date, default: null },
+    passwordResetTokenHash: { type: String, default: null, index: true },
+    passwordResetExpiresAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
@@ -27,12 +35,16 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', async function hashPassword(next) {
   if (!this.isModified('password')) return next();
   try {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (err) {
     next(err);
   }
 });
+
+userSchema.methods.isLocked = function isLocked() {
+  return Boolean(this.lockedUntil && this.lockedUntil.getTime() > Date.now());
+};
 
 export const User = mongoose.model('User', userSchema);

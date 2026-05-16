@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSignup } from '@/hooks/useSignup';
+import { useAuth } from '@/providers/AuthProvider';
 
 interface FormState {
   email: string;
@@ -23,11 +23,12 @@ const inputClass =
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const signupMutation = useSignup();
+  const { register } = useAuth();
 
   const [form, setForm] = useState<FormState>(initialForm);
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -39,8 +40,14 @@ export default function SignupPage() {
       return '이메일 형식이 올바르지 않습니다.';
     }
     if (!form.name.trim()) return '이름을 입력해주세요.';
-    if (form.password.length < 6) {
-      return '비밀번호는 6자 이상이어야 합니다.';
+    if (form.password.length < 8) {
+      return '비밀번호는 8자 이상이어야 합니다.';
+    }
+    if (!/[A-Za-z]/.test(form.password)) {
+      return '비밀번호에는 영문자가 1개 이상 포함되어야 합니다.';
+    }
+    if (!/\d/.test(form.password)) {
+      return '비밀번호에는 숫자가 1개 이상 포함되어야 합니다.';
     }
     if (form.password !== form.passwordConfirm) {
       return '비밀번호가 일치하지 않습니다.';
@@ -48,10 +55,10 @@ export default function SignupPage() {
     return null;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setValidationError(null);
-    setSuccessMessage(null);
+    setServerError(null);
 
     const message = validate();
     if (message) {
@@ -59,27 +66,21 @@ export default function SignupPage() {
       return;
     }
 
-    signupMutation.mutate(
-      {
+    setSubmitting(true);
+    try {
+      await register({
         email: form.email.trim(),
         name: form.name.trim(),
         password: form.password,
         address: form.address.trim() || undefined,
-      },
-      {
-        onSuccess: (user) => {
-          setSuccessMessage(`${user.name} 님, 가입이 완료되었습니다.`);
-          setForm(initialForm);
-          window.setTimeout(() => navigate('/'), 1500);
-        },
-      }
-    );
+      });
+      navigate('/', { replace: true });
+    } catch (err) {
+      setServerError(err instanceof Error ? err.message : '회원가입에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
   }
-
-  const serverErrorMessage =
-    signupMutation.isError && signupMutation.error
-      ? signupMutation.error.message
-      : null;
 
   return (
     <section className="mx-auto my-12 max-w-md rounded-xl border border-slate-200 bg-white px-7 py-8 shadow-sm">
@@ -124,7 +125,7 @@ export default function SignupPage() {
             type="password"
             value={form.password}
             onChange={(e) => updateField('password', e.target.value)}
-            placeholder="6자 이상"
+            placeholder="영문+숫자 8자 이상"
             autoComplete="new-password"
             className={inputClass}
             required
@@ -164,30 +165,25 @@ export default function SignupPage() {
             {validationError}
           </p>
         )}
-        {serverErrorMessage && !validationError && (
+        {serverError && !validationError && (
           <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
-            {serverErrorMessage}
-          </p>
-        )}
-        {successMessage && (
-          <p className="rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 text-sm text-green-700">
-            {successMessage}
+            {serverError}
           </p>
         )}
 
         <button
           type="submit"
-          disabled={signupMutation.isPending}
+          disabled={submitting}
           className="h-11 rounded-lg bg-indigo-600 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {signupMutation.isPending ? '가입 처리 중…' : '가입하기'}
+          {submitting ? '가입 처리 중…' : '가입하기'}
         </button>
       </form>
 
       <p className="mt-5 text-center text-sm text-slate-500">
         이미 계정이 있으신가요?{' '}
-        <Link to="/" className="font-semibold text-indigo-600 hover:underline">
-          홈으로
+        <Link to="/login" className="font-semibold text-indigo-600 hover:underline">
+          로그인
         </Link>
       </p>
     </section>

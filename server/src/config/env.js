@@ -16,4 +16,28 @@ export const env = {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean),
+  jwt: {
+    accessSecret: required(
+      'JWT_ACCESS_SECRET',
+      process.env.NODE_ENV === 'production' ? undefined : 'dev-access-secret-change-me'
+    ),
+    refreshSecret: required(
+      'JWT_REFRESH_SECRET',
+      process.env.NODE_ENV === 'production' ? undefined : 'dev-refresh-secret-change-me'
+    ),
+    accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN ?? '15m',
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '14d',
+  },
+  cookie: {
+    secure: (process.env.COOKIE_SECURE ?? 'false').toLowerCase() === 'true',
+    sameSite: process.env.COOKIE_SAME_SITE ?? 'lax',
+  },
+  mail: {
+    host: process.env.MAIL_HOST ?? '',
+    port: Number(process.env.MAIL_PORT ?? 587),
+    user: process.env.MAIL_USER ?? '',
+    pass: process.env.MAIL_PASS ?? '',
+    from: process.env.MAIL_FROM ?? 'Shopping Mall Demo <no-reply@example.com>',
+  },
+  appBaseUrl: process.env.APP_BASE_URL ?? 'http://localhost:5173',
 };

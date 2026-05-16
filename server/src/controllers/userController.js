@@ -29,8 +29,18 @@ export async function listUsers(req, res, next) {
   }
 }
 
+function isSelfOrAdmin(req) {
+  return (
+    req.user &&
+    (req.user.user_type === 'admin' || req.user.id === req.params.id)
+  );
+}
+
 export async function getUser(req, res, next) {
   try {
+    if (!isSelfOrAdmin(req)) {
+      return res.status(403).json({ message: '접근 권한이 없습니다.' });
+    }
     const user = await User.findById(req.params.id).select(PUBLIC_FIELDS);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -78,16 +88,25 @@ export async function createUser(req, res, next) {
 
 export async function updateUser(req, res, next) {
   try {
+    if (!isSelfOrAdmin(req)) {
+      return res.status(403).json({ message: '접근 권한이 없습니다.' });
+    }
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    const isAdmin = req.user.user_type === 'admin';
     const { email, name, password, user_type, address } = req.body;
     if (email !== undefined) user.email = email;
     if (name !== undefined) user.name = name;
     if (password !== undefined) user.password = password;
-    if (user_type !== undefined) user.user_type = user_type;
+    if (user_type !== undefined) {
+      if (!isAdmin) {
+        return res.status(403).json({ message: 'user_type 은 관리자만 변경할 수 있습니다.' });
+      }
+      user.user_type = user_type;
+    }
     if (address !== undefined) user.address = address;
 
     await user.save();
