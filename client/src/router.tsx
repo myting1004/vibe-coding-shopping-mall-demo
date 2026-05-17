@@ -5,6 +5,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import HomePage from '@/pages/HomePage';
 import ProductsPage from '@/pages/ProductsPage';
 import ProductDetailPage from '@/pages/ProductDetailPage';
+import CartPage from '@/pages/CartPage';
 import SignupPage from '@/pages/SignupPage';
 import LoginPage from '@/pages/LoginPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
@@ -24,6 +25,14 @@ export const router = createBrowserRouter([
       { index: true, Component: HomePage },
       { path: 'products', Component: ProductsPage },
       { path: 'products/:id', Component: ProductDetailPage },
+      {
+        path: 'cart',
+        element: (
+          <ProtectedRoute>
+            <CartPage />
+          </ProtectedRoute>
+        ),
+      },
       { path: 'login', Component: LoginPage },
       { path: 'signup', Component: SignupPage },
       { path: 'verify-email', Component: VerifyEmailPage },

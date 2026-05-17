@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import { useCart } from '@/hooks/useCart';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `text-sm font-medium transition ${
@@ -10,6 +11,8 @@ export default function Layout() {
   const navigate = useNavigate();
   const { user, isAuthenticated, isInitializing, logout } = useAuth();
   const isAdmin = isAuthenticated && user?.user_type === 'admin';
+  const { data: cart } = useCart();
+  const cartCount = cart?.totalQuantity ?? 0;
 
   async function handleLogout() {
     await logout();
@@ -60,6 +63,19 @@ export default function Layout() {
           </nav>
 
           <div className="flex items-center gap-2 text-sm">
+            <Link
+              to="/cart"
+              aria-label={`장바구니${cartCount > 0 ? ` (${cartCount}개)` : ''}`}
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            >
+              <CartIcon />
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold leading-none text-white">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
+
             {isInitializing ? (
               <span className="text-slate-400">…</span>
             ) : isAuthenticated && user ? (
@@ -159,5 +175,25 @@ export default function Layout() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function CartIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
   );
 }

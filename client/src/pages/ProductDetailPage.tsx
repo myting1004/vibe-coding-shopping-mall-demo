@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { useAddCartItem } from '@/hooks/useCart';
 import { useProduct } from '@/hooks/useProduct';
 import {
   deriveFeatures,
@@ -9,6 +10,7 @@ import {
   deriveReviews,
   deriveSpecs,
 } from '@/lib/productDerive';
+import { useAuth } from '@/providers/AuthProvider';
 import type { Product } from '@/types/product';
 
 type Tab = 'description' | 'specs' | 'reviews';
@@ -94,16 +96,6 @@ function DetailHeader({ onBack }: { onBack: () => void }) {
         <IconButton label="공유">
           <ShareIcon />
         </IconButton>
-        <Link
-          to="/products"
-          aria-label="장바구니"
-          className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-        >
-          <CartIcon />
-          <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold leading-none text-white">
-            0
-          </span>
-        </Link>
       </div>
     </header>
   );
@@ -176,6 +168,8 @@ function GalleryPane({
 
 /* ───── Summary (price, buy CTA) ───── */
 
+type Feedback = { tone: 'success' | 'error'; message: string };
+
 function SummaryPane({
   product,
   quantity,
@@ -193,6 +187,43 @@ function SummaryPane({
     () => deriveRating(product),
     [product]
   );
+
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const addItem = useAddCartItem();
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  // 성공/에러 피드백은 3초 후 자동 사라짐.
+  useEffect(() => {
+    if (!feedback) return;
+    const t = setTimeout(() => setFeedback(null), 3000);
+    return () => clearTimeout(t);
+  }, [feedback]);
+
+  function handleAddToCart() {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    addItem.mutate(
+      { productId: product._id, quantity },
+      {
+        onSuccess: () =>
+          setFeedback({
+            tone: 'success',
+            message: `장바구니에 ${quantity}개 담았습니다.`,
+          }),
+        onError: (err: unknown) => {
+          const message =
+            err instanceof Error
+              ? err.message
+              : '장바구니에 담는 중 오류가 발생했습니다.';
+          setFeedback({ tone: 'error', message });
+        },
+      }
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -267,9 +298,11 @@ function SummaryPane({
       <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
-          className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          onClick={handleAddToCart}
+          disabled={addItem.isPending}
+          className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          장바구니
+          {addItem.isPending ? '담는 중…' : '장바구니'}
         </button>
         <button
           type="button"
@@ -278,6 +311,27 @@ function SummaryPane({
           바로 구매
         </button>
       </div>
+
+      {feedback && (
+        <div
+          role="status"
+          className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm ${
+            feedback.tone === 'success'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+              : 'border-rose-200 bg-rose-50 text-rose-700'
+          }`}
+        >
+          <span>{feedback.message}</span>
+          {feedback.tone === 'success' && (
+            <Link
+              to="/cart"
+              className="text-xs font-semibold underline-offset-2 hover:underline"
+            >
+              장바구니 보기
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -574,26 +628,6 @@ function ShareIcon() {
       <circle cx="18" cy="19" r="3" />
       <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
       <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
     </svg>
   );
 }
