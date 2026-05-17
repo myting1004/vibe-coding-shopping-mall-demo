@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useProducts } from '@/hooks/useProducts';
 import { CATEGORIES } from '@/lib/categories';
+import { deriveListPrice } from '@/lib/productDerive';
 import type { Product } from '@/types/product';
 
 type CategoryFilter = 'all' | string;
@@ -312,19 +313,6 @@ function Pagination({
       </div>
     </nav>
   );
-}
-
-function deriveListPrice(product: Product): {
-  listPrice: number;
-  discountPercent: number;
-} {
-  const seed = Array.from(product.sku || product._id || product.name).reduce(
-    (acc, ch) => (acc * 31 + ch.charCodeAt(0)) >>> 0,
-    7
-  );
-  const discountPercent = 15 + (seed % 26);
-  const listPrice = Math.round(product.price / (1 - discountPercent / 100));
-  return { listPrice, discountPercent };
 }
 
 function PlusIcon() {

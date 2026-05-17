@@ -48,44 +48,53 @@ const NOTICES = [
 
 function ProductCard({ product, badge }: { product: Product; badge?: string }) {
   return (
-    <article className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
-      <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover transition group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
-            no image
+    <Link
+      to={`/products/${product._id}`}
+      className="group block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+    >
+      <article>
+        <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
+          {product.imageUrl ? (
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover transition group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+              no image
+            </div>
+          )}
+          {badge && (
+            <span className="absolute left-2 top-2 rounded-md bg-rose-600 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+              {badge}
+            </span>
+          )}
+          <button
+            type="button"
+            aria-label="찜하기"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-slate-500 shadow-sm hover:text-rose-600"
+          >
+            ♡
+          </button>
+        </div>
+        <div className="space-y-1 p-3">
+          <div className="text-[11px] text-slate-400">{product.category}</div>
+          <div className="line-clamp-1 text-sm font-semibold text-slate-900">
+            {product.name}
           </div>
-        )}
-        {badge && (
-          <span className="absolute left-2 top-2 rounded-md bg-rose-600 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-            {badge}
-          </span>
-        )}
-        <button
-          type="button"
-          aria-label="찜하기"
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-slate-500 shadow-sm hover:text-rose-600"
-        >
-          ♡
-        </button>
-      </div>
-      <div className="space-y-1 p-3">
-        <div className="text-[11px] text-slate-400">{product.category}</div>
-        <div className="line-clamp-1 text-sm font-semibold text-slate-900">
-          {product.name}
+          <div className="text-sm font-bold text-slate-900">
+            {product.price.toLocaleString()}원
+          </div>
         </div>
-        <div className="text-sm font-bold text-slate-900">
-          {product.price.toLocaleString()}원
-        </div>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }
 

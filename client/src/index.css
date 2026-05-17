@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+/* Tailwind preflight / 브라우저 기본은 button·[role="button"] 에 cursor:default 라
+   클릭 가능 요소 전체에 일괄적으로 손가락 커서를 보장한다.
+   disabled 상태는 not-allowed 로 분리. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary,
+  select:not(:disabled),
+  input[type="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="file"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+}

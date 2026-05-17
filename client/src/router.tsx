@@ -4,6 +4,7 @@ import AdminLayout from '@/components/AdminLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import HomePage from '@/pages/HomePage';
 import ProductsPage from '@/pages/ProductsPage';
+import ProductDetailPage from '@/pages/ProductDetailPage';
 import SignupPage from '@/pages/SignupPage';
 import LoginPage from '@/pages/LoginPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: HomePage },
       { path: 'products', Component: ProductsPage },
+      { path: 'products/:id', Component: ProductDetailPage },
       { path: 'login', Component: LoginPage },
       { path: 'signup', Component: SignupPage },
       { path: 'verify-email', Component: VerifyEmailPage },
