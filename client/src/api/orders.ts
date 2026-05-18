@@ -5,6 +5,7 @@ import type {
   Order,
   OrderListPagination,
   OrderListResult,
+  OrderStatus,
 } from '@/types/order';
 
 interface OrderResponse {
@@ -36,6 +37,20 @@ export async function fetchOrder(id: string): Promise<Order> {
 export async function cancelOrder(id: string, reason?: string): Promise<Order> {
   const res = await apiClient.post<OrderResponse>(`/orders/${id}/cancel`, {
     reason,
+  });
+  return res.data.data;
+}
+
+// admin 전용 — preparing → shipped → delivered 같은 상태 직접 변경.
+// 취소는 cancelOrder() 사용 (서버에서 분리된 엔드포인트).
+export async function updateOrderStatus(
+  id: string,
+  status: Exclude<OrderStatus, 'cancelled'>,
+  note?: string
+): Promise<Order> {
+  const res = await apiClient.patch<OrderResponse>(`/orders/${id}/status`, {
+    status,
+    note,
   });
   return res.data.data;
 }

@@ -14,7 +14,7 @@ interface SpecRow {
   value: string;
 }
 
-export default function AdminProductRegisterPage() {
+export default function ProductRegisterPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 

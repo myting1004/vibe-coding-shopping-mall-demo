@@ -15,10 +15,10 @@ import LoginPage from '@/pages/LoginPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import PasswordResetRequestPage from '@/pages/PasswordResetRequestPage';
 import PasswordResetConfirmPage from '@/pages/PasswordResetConfirmPage';
-import AdminPage from '@/pages/AdminPage';
-import AdminProductsPage from '@/pages/AdminProductsPage';
-import AdminProductRegisterPage from '@/pages/AdminProductRegisterPage';
-import AdminOrdersPage from '@/pages/AdminOrdersPage';
+import AdminDashboardPage from '@/pages/admin/DashboardPage';
+import AdminProductsPage from '@/pages/admin/ProductsPage';
+import AdminProductRegisterPage from '@/pages/admin/ProductRegisterPage';
+import AdminOrdersPage from '@/pages/admin/OrdersPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -85,7 +85,7 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, Component: AdminPage },
+      { index: true, Component: AdminDashboardPage },
       { path: 'products', Component: AdminProductsPage },
       { path: 'products/new', Component: AdminProductRegisterPage },
       { path: 'orders', Component: AdminOrdersPage },

@@ -27,7 +27,7 @@ const FILTER_CATEGORIES: { key: CategoryFilter; label: string }[] = [
 
 const PAGE_SIZE = 10;
 
-export default function AdminProductsPage() {
+export default function ProductsPage() {
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [keyword, setKeyword] = useState('');
   const [page, setPage] = useState(1);

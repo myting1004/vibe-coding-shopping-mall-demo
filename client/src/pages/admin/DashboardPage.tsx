@@ -99,7 +99,7 @@ const popularProducts: PopularProduct[] = [
   },
 ];
 
-export default function AdminPage() {
+export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <header className="flex items-start justify-between">

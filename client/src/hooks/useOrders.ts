@@ -10,9 +10,14 @@ import {
   createOrder,
   fetchOrder,
   fetchOrders,
+  updateOrderStatus,
 } from '@/api/orders';
 import { CART_QUERY_KEY } from '@/hooks/useCart';
-import type { CreateOrderInput, ListOrdersParams } from '@/types/order';
+import type {
+  CreateOrderInput,
+  ListOrdersParams,
+  OrderStatus,
+} from '@/types/order';
 
 export const ORDERS_QUERY_KEY = ['orders'] as const;
 
@@ -49,6 +54,28 @@ export function useCancelOrder() {
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
       cancelOrder(id, reason),
+    onSuccess: (order) => {
+      queryClient.setQueryData(
+        [...ORDERS_QUERY_KEY, 'detail', order._id],
+        order
+      );
+      queryClient.invalidateQueries({ queryKey: ORDERS_QUERY_KEY });
+    },
+  });
+}
+
+export function useUpdateOrderStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      status,
+      note,
+    }: {
+      id: string;
+      status: Exclude<OrderStatus, 'cancelled'>;
+      note?: string;
+    }) => updateOrderStatus(id, status, note),
     onSuccess: (order) => {
       queryClient.setQueryData(
         [...ORDERS_QUERY_KEY, 'detail', order._id],
