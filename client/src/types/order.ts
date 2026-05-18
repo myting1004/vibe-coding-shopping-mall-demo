@@ -52,6 +52,9 @@ export interface Order {
     method: PaymentMethod;
     status: PaymentStatus;
     paidAt: string | null;
+    impUid: string | null;
+    merchantUid: string | null;
+    paidAmount: number | null;
   };
   status: OrderStatus;
   statusHistory: StatusHistoryEntry[];
@@ -62,6 +65,9 @@ export interface Order {
 }
 
 export interface CreateOrderInput {
+  // PortOne 결제건 식별자 — 서버가 이 값으로 PortOne 에 결제 검증을 호출.
+  impUid: string;
+  merchantUid: string;
   shippingAddress: Omit<ShippingAddress, 'address2' | 'memo'> &
     Partial<Pick<ShippingAddress, 'address2' | 'memo'>>;
   payment: { method: PaymentMethod };

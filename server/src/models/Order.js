@@ -102,6 +102,12 @@ const orderSchema = new mongoose.Schema(
         default: 'pending',
       },
       paidAt: { type: Date, default: null },
+      // PortOne(iamport) 결제건 식별자 — 중복 결제 방지용 unique sparse.
+      impUid: { type: String, default: null, unique: true, sparse: true },
+      // 가맹점측 주문번호 (클라이언트가 생성해 IMP.request_pay 에 넘긴 값).
+      merchantUid: { type: String, default: null },
+      // PortOne 응답에서 받은 실제 결제 금액 (검증 통과 시 저장).
+      paidAmount: { type: Number, default: null },
     },
 
     status: {

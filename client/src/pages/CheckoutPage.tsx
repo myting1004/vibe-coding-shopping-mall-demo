@@ -135,10 +135,15 @@ export default function CheckoutPage() {
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
-  // 결제 성공 후 서버에 실제 주문 생성 + 완료 페이지로 이동.
-  const finalizeOrder = async () => {
+  // 결제 성공 후 서버에 imp_uid 와 함께 주문 생성 요청 → 서버가 PortOne 검증 → 완료 페이지로.
+  const finalizeOrder = async (paymentIds: {
+    impUid: string;
+    merchantUid: string;
+  }) => {
     try {
       const order = await createOrder.mutateAsync({
+        impUid: paymentIds.impUid,
+        merchantUid: paymentIds.merchantUid,
         shippingAddress: {
           recipient: form.recipient,
           phone: form.phone,
@@ -153,13 +158,23 @@ export default function CheckoutPage() {
     } catch (err) {
       if (isAxiosError(err)) {
         const data = err.response?.data as
-          | { message?: string; items?: Array<{ name: string; stock: number }> }
+          | {
+              message?: string;
+              code?: string;
+              items?: Array<{ name: string; stock: number }>;
+              expected?: number;
+              actual?: number;
+            }
           | undefined;
-        if (data?.items && data.items.length > 0) {
+        if (data?.code === 'OUT_OF_STOCK' && data.items?.length) {
           const detail = data.items
             .map((it) => `${it.name} (재고 ${it.stock}개)`)
             .join(', ');
           setErrorMsg(`재고 부족: ${detail}`);
+        } else if (data?.code === 'AMOUNT_MISMATCH') {
+          setErrorMsg(
+            `결제 금액 불일치 (요청 ${data.expected?.toLocaleString()}원 / 실제 ${data.actual?.toLocaleString()}원). 결제가 자동 환불되었습니다.`
+          );
         } else {
           setErrorMsg(data?.message ?? '주문 처리에 실패했습니다.');
         }
@@ -206,12 +221,14 @@ export default function CheckoutPage() {
         : `${items[0].product.name} 외 ${items.length - 1}건`;
 
     const buyerAddr = [form.address1, form.address2].filter(Boolean).join(' ');
+    // merchant_uid 는 콜백에서 서버 검증에 동일하게 전달해야 하므로 변수에 저장.
+    const merchantUid = generateMerchantUid();
 
     window.IMP.request_pay(
       {
         ...(IMP_PG ? { pg: IMP_PG } : {}),
         pay_method: IMP_PAY_METHOD[method],
-        merchant_uid: generateMerchantUid(),
+        merchant_uid: merchantUid,
         name: itemName,
         amount: totalAmount,
         buyer_name: form.recipient,
@@ -225,9 +242,12 @@ export default function CheckoutPage() {
           setErrorMsg(`결제 실패: ${rsp.error_msg ?? '알 수 없는 오류'}`);
           return;
         }
-        // 결제 성공 → 서버에 주문 생성.
-        // (운영에서는 서버에서 imp_uid 로 실제 결제 내역을 조회해 금액 검증 필요)
-        void finalizeOrder();
+        if (!rsp.imp_uid) {
+          setErrorMsg('결제 응답에 imp_uid 가 없습니다.');
+          return;
+        }
+        // 결제 성공 → 서버가 merchant_uid 로 PortOne V2 검증 후 주문 생성.
+        void finalizeOrder({ impUid: rsp.imp_uid, merchantUid });
       }
     );
   };

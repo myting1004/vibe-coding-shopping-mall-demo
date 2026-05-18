@@ -40,4 +40,10 @@ export const env = {
     from: process.env.MAIL_FROM ?? 'Shopping Mall Demo <no-reply@example.com>',
   },
   appBaseUrl: process.env.APP_BASE_URL ?? 'http://localhost:5173',
+  // PortOne V2 REST API — 결제 검증/취소 사용 시 필요. 미설정이면 검증 로직이 비활성화.
+  // V2 콘솔(admin.portone.io) > 결제연동 > 식별코드·API Keys > V2 API 탭에서 발급.
+  // V1 SDK + V2 채널 구성에서도 V2 REST API 로 결제건을 조회 가능.
+  portone: {
+    v2ApiSecret: process.env.PORTONE_V2_API_SECRET ?? '',
+  },
 };
