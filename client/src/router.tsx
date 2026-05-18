@@ -8,6 +8,8 @@ import ProductDetailPage from '@/pages/ProductDetailPage';
 import CartPage from '@/pages/CartPage';
 import CheckoutPage from '@/pages/CheckoutPage';
 import OrderCompletePage from '@/pages/OrderCompletePage';
+import OrdersPage from '@/pages/OrdersPage';
+import OrderDetailPage from '@/pages/OrderDetailPage';
 import SignupPage from '@/pages/SignupPage';
 import LoginPage from '@/pages/LoginPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
@@ -48,6 +50,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <OrderCompletePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'orders',
+        element: (
+          <ProtectedRoute>
+            <OrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'orders/:orderId',
+        element: (
+          <ProtectedRoute>
+            <OrderDetailPage />
           </ProtectedRoute>
         ),
       },

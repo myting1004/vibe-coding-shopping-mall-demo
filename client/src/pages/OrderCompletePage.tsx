@@ -168,7 +168,13 @@ export default function OrderCompletePage() {
         </dl>
       </section>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
+        <Link
+          to="/orders"
+          className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-slate-700"
+        >
+          주문 내역 보기
+        </Link>
         <Link
           to="/products"
           className="flex-1 rounded-lg bg-rose-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-rose-500"
@@ -177,7 +183,7 @@ export default function OrderCompletePage() {
         </Link>
         <Link
           to="/"
-          className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="basis-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50 sm:flex-1 sm:basis-auto"
         >
           홈으로
         </Link>

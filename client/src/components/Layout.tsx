@@ -86,6 +86,18 @@ export default function Layout() {
                   </strong>
                   님 환영합니다
                 </span>
+                <NavLink
+                  to="/orders"
+                  className={({ isActive }) =>
+                    `rounded-md border px-3 py-1.5 text-xs font-medium shadow-sm transition ${
+                      isActive
+                        ? 'border-rose-200 bg-rose-50 text-rose-700'
+                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    }`
+                  }
+                >
+                  주문 내역
+                </NavLink>
                 {isAdmin && (
                   <Link
                     to="/admin"
