@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   useCart,
@@ -188,6 +188,8 @@ function OrderSummary({
   subtotal: number;
   count: number;
 }) {
+  const navigate = useNavigate();
+
   return (
     <aside className="h-fit space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24">
       <h2 className="text-base font-bold text-slate-900">주문 요약</h2>
@@ -214,6 +216,7 @@ function OrderSummary({
 
       <button
         type="button"
+        onClick={() => navigate('/checkout')}
         className="w-full rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500 disabled:opacity-50"
         disabled={count === 0}
       >
