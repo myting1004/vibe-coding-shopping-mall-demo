@@ -8,10 +8,18 @@ const required = (key, fallback) => {
   return value;
 };
 
+// MONGODB_ATLAS_URL 이 채워져 있으면 Atlas 클라우드 DB 우선 사용,
+// 비어 있으면 MONGO_URI(로컬) 로 폴백.
+const resolveMongoUri = () => {
+  const atlas = (process.env.MONGODB_ATLAS_URL ?? '').trim();
+  if (atlas) return atlas;
+  return required('MONGO_URI', 'mongodb://127.0.0.1:27017/shopping_mall_demo');
+};
+
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: Number(process.env.PORT ?? 4000),
-  mongoUri: required('MONGO_URI', 'mongodb://127.0.0.1:27017/shopping_mall_demo'),
+  mongoUri: resolveMongoUri(),
   corsOrigin: (process.env.CORS_ORIGIN ?? '*')
     .split(',')
     .map((s) => s.trim())
