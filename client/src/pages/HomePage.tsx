@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
+import CategoryNav from '@/components/CategoryNav';
 import { useProducts } from '@/hooks/useProducts';
-import { HOME_CATEGORIES as CATEGORIES } from '@/lib/categories';
 import type { Product } from '@/types/product';
 
 const NEWS = [
@@ -176,25 +176,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 카테고리 아이콘 행 */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="grid grid-cols-5 gap-2 md:grid-cols-10">
-          {CATEGORIES.map((c) => (
-            <Link
-              key={c.key}
-              to={c.key === 'all' ? '/products' : `/products?category=${c.key}`}
-              className="flex flex-col items-center gap-1.5 rounded-xl px-2 py-3 text-center transition hover:bg-rose-50"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-lg">
-                {c.icon}
-              </span>
-              <span className="text-xs font-medium text-slate-700">
-                {c.label}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </div>
+      <CategoryNav />
 
       {/* 상단 알림 카드 3개 */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">

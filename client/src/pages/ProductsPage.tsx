@@ -1,9 +1,15 @@
+import { Link, useSearchParams } from 'react-router-dom';
+import CategoryNav from '@/components/CategoryNav';
 import { useProducts } from '@/hooks/useProducts';
+import { HOME_CATEGORIES } from '@/lib/categories';
 import type { Product } from '@/types/product';
 
 function ProductCard({ product }: { product: Product }) {
   return (
-    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+    <Link
+      to={`/products/${product._id}`}
+      className="block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
+    >
       <div className="aspect-square w-full bg-slate-100">
         {product.imageUrl ? (
           <img
@@ -18,31 +24,45 @@ function ProductCard({ product }: { product: Product }) {
         )}
       </div>
       <div className="space-y-1 p-4">
-        <div className="text-xs text-slate-500">{product.category}</div>
+        <div className="text-xs text-slate-500">
+          {HOME_CATEGORIES.find((c) => c.key === product.category)?.label ??
+            product.category}
+        </div>
         <div className="font-semibold text-slate-900">{product.name}</div>
-        <div className="text-sm font-medium text-indigo-600">
+        <div className="text-sm font-medium text-rose-600">
           {product.price.toLocaleString()}원
         </div>
         <div className="text-xs text-slate-500">재고 {product.stock}</div>
       </div>
-    </article>
+    </Link>
   );
 }
 
 export default function ProductsPage() {
+  const [searchParams] = useSearchParams();
+  const categoryKey = searchParams.get('category') || 'all';
+  const categoryLabel =
+    HOME_CATEGORIES.find((c) => c.key === categoryKey)?.label ?? '전체';
+
+  const queryParam =
+    categoryKey === 'all' ? undefined : { category: categoryKey };
+
   const { data, isLoading, isError, error, refetch, isFetching } =
-    useProducts();
+    useProducts(queryParam);
 
   return (
     <section className="space-y-4">
+      <CategoryNav />
+
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">상품 목록</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {categoryKey === 'all' ? '전체 상품' : categoryLabel}
+          </h1>
           <p className="text-sm text-slate-500">
-            <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">
-              GET /api/products
-            </code>{' '}
-            응답을 그대로 표시합니다.
+            {categoryKey === 'all'
+              ? '모든 카테고리의 상품을 둘러보세요.'
+              : `${categoryLabel} 카테고리 상품입니다.`}
           </p>
         </div>
         <button
@@ -72,8 +92,9 @@ export default function ProductsPage() {
 
       {data && data.length === 0 && (
         <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
-          등록된 상품이 없습니다. 서버에서 <code>POST /api/products</code>로
-          추가해 보세요.
+          {categoryKey === 'all'
+            ? '등록된 상품이 없습니다.'
+            : `${categoryLabel} 카테고리에 등록된 상품이 없습니다.`}
         </div>
       )}
 

@@ -19,6 +19,7 @@ import AdminDashboardPage from '@/pages/admin/DashboardPage';
 import AdminProductsPage from '@/pages/admin/ProductsPage';
 import AdminProductRegisterPage from '@/pages/admin/ProductRegisterPage';
 import AdminOrdersPage from '@/pages/admin/OrdersPage';
+import ComingSoonPage from '@/pages/ComingSoonPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -29,6 +30,8 @@ export const router = createBrowserRouter([
       { index: true, Component: HomePage },
       { path: 'products', Component: ProductsPage },
       { path: 'products/:id', Component: ProductDetailPage },
+      { path: 'promotions', Component: ComingSoonPage },
+      { path: 'brands', Component: ComingSoonPage },
       {
         path: 'cart',
         element: (

@@ -54,10 +54,10 @@ export default function Layout() {
             <NavLink to="/products" className={navLinkClass}>
               상품
             </NavLink>
-            <NavLink to="/products?category=event" className={navLinkClass}>
+            <NavLink to="/promotions" className={navLinkClass}>
               기획전
             </NavLink>
-            <NavLink to="/products?category=brand" className={navLinkClass}>
+            <NavLink to="/brands" className={navLinkClass}>
               브랜드
             </NavLink>
           </nav>
