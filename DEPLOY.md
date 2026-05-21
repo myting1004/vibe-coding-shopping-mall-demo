@@ -56,10 +56,10 @@ heroku create <your-app-name>           # 예: shopping-mall-demo-api
 ```bash
 heroku buildpacks:add -i 1 https://github.com/lstoll/heroku-buildpack-monorepo -a <your-app-name>
 heroku buildpacks:add -i 2 heroku/nodejs -a <your-app-name>
-heroku config:set PROJECT_PATH=server -a <your-app-name>
+heroku config:set APP_BASE=server -a <your-app-name>
 ```
 
-> `-i 1` / `-i 2` 는 실행 순서. monorepo 가 먼저 돌면서 `server/` 만 잘라낸 다음 nodejs buildpack 이 그 위에서 `npm install` / `npm start` 를 수행.
+> `-i 1` / `-i 2` 는 실행 순서. monorepo 가 먼저 돌면서 `APP_BASE` 로 지정된 `server/` 디렉토리를 빌드 루트로 끌어올린 다음, nodejs buildpack 이 그 위에서 `npm install` / `npm start` 를 수행. (변수 이름은 `APP_BASE` — `PROJECT_PATH` 아님)
 
 ### 2-3. Config Vars 등록 (1차)
 
