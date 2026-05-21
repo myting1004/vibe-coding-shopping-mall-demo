@@ -17,7 +17,12 @@ export type HeroBanner = {
   subtitleColor: string;
 };
 
-const LGE_CDN = 'https://www.lge.co.kr/kr/upload/admin/display/displayObject';
+const LGE_CDN = 'https://static.lge.co.kr/kr/upload/admin/display/displayObject';
+
+/** 한글·공백 파일명은 encodeURI 로 인코딩 (수동 % 인코딩 시 404) */
+function lgeAsset(filename: string) {
+  return `${LGE_CDN}/${encodeURI(filename)}`;
+}
 
 export const HERO_BANNERS: HeroBanner[] = [
   {
@@ -49,7 +54,7 @@ export const HERO_BANNERS: HeroBanner[] = [
   {
     id: 'water-purifier-festa',
     lgeSlot: 6,
-    badgeImage: `${LGE_CDN}/%EA%B0%80%EC%A0%84%EA%B5%AC%EB%8F%85r_20260519_173311.png`,
+    badgeImage: lgeAsset('가전구독r_20260519_173311.png'),
     titleLines: ['1년에 단 한번', '정수기 水퍼 페스타'],
     subtitle: '최대 12개월 50% 할인',
     image: `${LGE_CDN}/homemain_hero_pc_260430_20260519_180634.png`,
@@ -77,7 +82,7 @@ export const HERO_BANNERS: HeroBanner[] = [
     badgeImage: `${LGE_CDN}/06r_20251217_111246.png`,
     titleLines: ['결혼 정보에 대한 모든 것', 'D5 웨딩 커뮤니티'],
     subtitle: '커뮤니티 참여하기 >',
-    image: `${LGE_CDN}/OBS%20%ED%99%88%ED%9E%88%EC%96%B4%20%EB%A9%94%EC%9D%B8%EB%B0%B0%EB%84%88_%20PC%20copy_20260203_154656.jpg`,
+    image: lgeAsset('OBS 홈히어로 메인배너_ PC copy_20260203_154656.jpg'),
     imageAlt: 'D5 웨딩 커뮤니티 프로모션 비주얼',
     href: '/promotions',
     titleColor: '#111111',
