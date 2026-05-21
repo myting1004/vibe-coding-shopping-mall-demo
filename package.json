@@ -9,6 +9,6 @@
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "cd server && node src/server.js",
-    "heroku-postbuild": "corepack enable && corepack prepare yarn@1.22.22 --activate && cd server && yarn install --frozen-lockfile --ignore-engines"
+    "heroku-postbuild": "corepack enable && corepack prepare yarn@1.22.22 --activate && cd server && yarn install --frozen-lockfile --ignore-engines --registry https://registry.npmjs.org/"
   }
 }
