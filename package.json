@@ -1,0 +1,13 @@
+{
+  "name": "shopping-mall-demo-heroku",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Heroku deploy wrapper — installs server/ deps via heroku-postbuild",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "cd server && node src/server.js",
+    "heroku-postbuild": "cd server && yarn install --frozen-lockfile --ignore-engines"
+  }
+}
