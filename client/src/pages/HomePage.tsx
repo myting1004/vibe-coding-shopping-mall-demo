@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import CategoryNav from '@/components/CategoryNav';
+import DiscountPrice from '@/components/DiscountPrice';
+import HeroCarousel from '@/components/HeroCarousel';
 import { useProducts } from '@/hooks/useProducts';
 import type { Product } from '@/types/product';
 
@@ -89,9 +91,7 @@ function ProductCard({ product, badge }: { product: Product; badge?: string }) {
           <div className="line-clamp-1 text-sm font-semibold text-slate-900">
             {product.name}
           </div>
-          <div className="text-sm font-bold text-slate-900">
-            {product.price.toLocaleString()}원
-          </div>
+          <DiscountPrice price={product.price} />
         </div>
       </article>
     </Link>
@@ -120,61 +120,7 @@ export default function HomePage() {
 
   return (
     <section className="space-y-10">
-      {/* 히어로 배너 */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-600 via-rose-500 to-rose-700 text-white shadow-lg">
-        <div className="absolute inset-0 opacity-30 mix-blend-overlay" aria-hidden="true">
-          <img
-            src="https://images.unsplash.com/photo-1593784991095-a205069470b6?w=1600&q=80&auto=format&fit=crop"
-            alt=""
-            decoding="async"
-            fetchPriority="high"
-            className="h-full w-full object-cover"
-          />
-        </div>
-        <div className="relative grid gap-6 px-8 py-12 md:grid-cols-2 md:px-12 md:py-16">
-          <div className="space-y-4">
-            <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider backdrop-blur">
-              new arrival
-            </span>
-            <h1 className="text-3xl font-black leading-tight md:text-5xl">
-              NEW OLED TV
-              <br />
-              완벽한 화질의 시작
-            </h1>
-            <p className="max-w-md text-sm text-white/90">
-              사전예약 고객에게만 드리는 특별한 혜택. 지금 만나보세요.
-            </p>
-            <Link
-              to="/products"
-              className="inline-block rounded-full bg-white px-5 py-2.5 text-sm font-bold text-rose-600 shadow hover:bg-slate-50"
-            >
-              자세히 보기 →
-            </Link>
-          </div>
-          <div className="hidden items-center justify-center md:flex">
-            <div className="grid grid-cols-2 gap-3">
-              {['Samsung', 'Meiding', 'Privacy', 'Netflix'].map((b) => (
-                <div
-                  key={b}
-                  className="flex h-16 w-32 items-center justify-center rounded-lg bg-white/15 text-sm font-semibold backdrop-blur"
-                >
-                  {b}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="relative flex items-center justify-center gap-2 pb-5">
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              className={`h-1.5 rounded-full transition ${
-                i === 0 ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
+      <HeroCarousel />
 
       <CategoryNav />
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import DiscountPrice from '@/components/DiscountPrice';
 import { useAddCartItem } from '@/hooks/useCart';
 import { useProduct } from '@/hooks/useProduct';
 import {
@@ -246,13 +247,11 @@ function SummaryPane({
       </div>
 
       <div className="border-y border-slate-200 py-4">
-        <div className="flex items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-2xl font-bold text-rose-600">
             {discountPercent}%
           </span>
-          <span className="text-3xl font-extrabold text-slate-900">
-            {product.price.toLocaleString()}원
-          </span>
+          <DiscountPrice price={product.price} size="md" />
         </div>
         <div className="mt-1 flex items-baseline gap-2 text-sm">
           <span className="text-slate-400 line-through">

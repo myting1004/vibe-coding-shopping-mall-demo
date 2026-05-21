@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import CategoryNav from '@/components/CategoryNav';
+import DiscountPrice from '@/components/DiscountPrice';
 import { useProducts } from '@/hooks/useProducts';
 import { HOME_CATEGORIES } from '@/lib/categories';
 import type { Product } from '@/types/product';
@@ -29,9 +30,7 @@ function ProductCard({ product }: { product: Product }) {
             product.category}
         </div>
         <div className="font-semibold text-slate-900">{product.name}</div>
-        <div className="text-sm font-medium text-rose-600">
-          {product.price.toLocaleString()}원
-        </div>
+        <DiscountPrice price={product.price} />
         <div className="text-xs text-slate-500">재고 {product.stock}</div>
       </div>
     </Link>
