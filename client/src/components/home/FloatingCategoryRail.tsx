@@ -22,7 +22,7 @@ export default function FloatingCategoryRail({
           : 'pointer-events-none translate-x-2 opacity-0'
       }`}
       style={{
-        top: '6.5rem',
+        top: '5.25rem',
         left: RAIL_LEFT,
       }}
     >
