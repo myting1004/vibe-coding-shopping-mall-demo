@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import DiscountPrice from '@/components/DiscountPrice';
-import { useAddCartItem } from '@/hooks/useCart';
+import { useAddCartItem, useClearCart } from '@/hooks/useCart';
 import { useProduct } from '@/hooks/useProduct';
 import {
   deriveFeatures,
@@ -193,7 +193,10 @@ function SummaryPane({
   const navigate = useNavigate();
   const location = useLocation();
   const addItem = useAddCartItem();
+  const clearCart = useClearCart();
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [buyNowActive, setBuyNowActive] = useState(false);
+  const cartBusy = addItem.isPending || clearCart.isPending;
 
   // 성공/에러 피드백은 3초 후 자동 사라짐.
   useEffect(() => {
@@ -201,6 +204,10 @@ function SummaryPane({
     const t = setTimeout(() => setFeedback(null), 3000);
     return () => clearTimeout(t);
   }, [feedback]);
+
+  function cartErrorMessage(err: unknown, fallback: string) {
+    return err instanceof Error ? err.message : fallback;
+  }
 
   function handleAddToCart() {
     if (!isAuthenticated) {
@@ -216,14 +223,58 @@ function SummaryPane({
             message: `장바구니에 ${quantity}개 담았습니다.`,
           }),
         onError: (err: unknown) => {
-          const message =
-            err instanceof Error
-              ? err.message
-              : '장바구니에 담는 중 오류가 발생했습니다.';
-          setFeedback({ tone: 'error', message });
+          setFeedback({
+            tone: 'error',
+            message: cartErrorMessage(
+              err,
+              '장바구니에 담는 중 오류가 발생했습니다.'
+            ),
+          });
         },
       }
     );
+  }
+
+  function handleBuyNow() {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    setFeedback(null);
+    setBuyNowActive(true);
+    clearCart.mutate(undefined, {
+      onSuccess: () => {
+        addItem.mutate(
+          { productId: product._id, quantity },
+          {
+            onSuccess: () => {
+              setBuyNowActive(false);
+              navigate('/checkout');
+            },
+            onError: (err: unknown) => {
+              setBuyNowActive(false);
+              setFeedback({
+                tone: 'error',
+                message: cartErrorMessage(
+                  err,
+                  '주문 준비 중 오류가 발생했습니다.'
+                ),
+              });
+            },
+          }
+        );
+      },
+      onError: (err: unknown) => {
+        setBuyNowActive(false);
+        setFeedback({
+          tone: 'error',
+          message: cartErrorMessage(
+            err,
+            '주문 준비 중 오류가 발생했습니다.'
+          ),
+        });
+      },
+    });
   }
 
   return (
@@ -298,16 +349,18 @@ function SummaryPane({
         <button
           type="button"
           onClick={handleAddToCart}
-          disabled={addItem.isPending}
+          disabled={cartBusy}
           className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {addItem.isPending ? '담는 중…' : '장바구니'}
+          {addItem.isPending && !buyNowActive ? '담는 중…' : '장바구니'}
         </button>
         <button
           type="button"
-          className="rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500"
+          onClick={handleBuyNow}
+          disabled={cartBusy}
+          className="rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          바로 구매
+          {buyNowActive ? '이동 중…' : '바로 구매'}
         </button>
       </div>
 

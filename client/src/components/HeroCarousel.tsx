@@ -15,15 +15,13 @@ function HeroSlide({ banner }: { banner: HeroBanner }) {
     <article className="relative min-h-[280px] w-full shrink-0 overflow-hidden bg-slate-100 md:min-h-[320px]">
       <img
         src={banner.image}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
+        alt={banner.imageAlt}
+        className="absolute inset-0 h-full w-full object-cover object-center"
         decoding="async"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/20 md:via-white/70 md:to-transparent" />
 
-      <div className="relative grid h-full gap-6 py-10 pl-16 pr-14 md:grid-cols-2 md:py-14 md:pl-20 md:pr-20">
-        <div className="flex flex-col justify-center space-y-4">
+      <div className="relative px-6 py-10 md:px-12 md:py-14">
+        <div className="flex max-w-xl flex-col justify-center space-y-4">
           {banner.badgeImage && (
             <img
               src={banner.badgeImage}
@@ -64,15 +62,6 @@ function HeroSlide({ banner }: { banner: HeroBanner }) {
             </Link>
           )}
         </div>
-
-        <div className="hidden items-center justify-center md:flex">
-          <img
-            src={banner.image}
-            alt={banner.imageAlt}
-            className="max-h-[220px] w-auto max-w-full object-contain drop-shadow-md"
-            loading="lazy"
-          />
-        </div>
       </div>
     </article>
   );
@@ -102,23 +91,44 @@ export default function HeroCarousel() {
   }, [paused, count]);
 
   return (
-    <section
-      className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg"
-      aria-roledescription="carousel"
-      aria-label="메인 프로모션 배너"
+    <div
+      className="relative w-full"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div
-        className="flex transition-transform duration-500 ease-out motion-reduce:transition-none"
-        style={{ transform: `translateX(-${active * 100}%)` }}
+      <section
+        className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg"
+        aria-roledescription="carousel"
+        aria-label="메인 프로모션 배너"
       >
-        {HERO_BANNERS.map((banner) => (
-          <HeroSlide key={banner.id} banner={banner} />
-        ))}
-      </div>
+        <div
+          className="flex transition-transform duration-500 ease-out motion-reduce:transition-none"
+          style={{ transform: `translateX(-${active * 100}%)` }}
+        >
+          {HERO_BANNERS.map((banner) => (
+            <HeroSlide key={banner.id} banner={banner} />
+          ))}
+        </div>
+
+        <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
+          {HERO_BANNERS.map((banner, i) => (
+            <button
+              key={banner.id}
+              type="button"
+              aria-label={`${i + 1}번째 배너: ${banner.titleLines[0]}`}
+              aria-current={i === active ? 'true' : undefined}
+              onClick={() => goTo(i)}
+              className={`h-1.5 rounded-full transition ${
+                i === active
+                  ? 'w-6 bg-rose-600'
+                  : 'w-1.5 bg-slate-400/80 hover:bg-slate-500'
+              }`}
+            />
+          ))}
+        </div>
+      </section>
 
       {count > 1 && (
         <>
@@ -134,22 +144,7 @@ export default function HeroCarousel() {
           />
         </>
       )}
-
-      <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
-        {HERO_BANNERS.map((banner, i) => (
-          <button
-            key={banner.id}
-            type="button"
-            aria-label={`${i + 1}번째 배너: ${banner.titleLines[0]}`}
-            aria-current={i === active ? 'true' : undefined}
-            onClick={() => goTo(i)}
-            className={`h-1.5 rounded-full transition ${
-              i === active ? 'w-6 bg-rose-600' : 'w-1.5 bg-slate-400/80 hover:bg-slate-500'
-            }`}
-          />
-        ))}
-      </div>
-    </section>
+    </div>
   );
 }
 
@@ -167,8 +162,10 @@ function CarouselNavButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`absolute top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white/90 text-slate-700 shadow-md backdrop-blur transition hover:bg-white hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 ${
-        direction === 'prev' ? 'left-3 md:left-4' : 'right-3 md:right-4'
+      className={`absolute top-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-lg transition hover:bg-white hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 ${
+        direction === 'prev'
+          ? 'left-0 -translate-x-1/2 -translate-y-1/2'
+          : 'right-0 translate-x-1/2 -translate-y-1/2'
       }`}
     >
       <ChevronIcon direction={direction} />

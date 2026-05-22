@@ -6,8 +6,8 @@ export default function CategoryNav() {
   const activeKey = searchParams.get('category') || 'all';
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="grid grid-cols-5 gap-2 md:grid-cols-10">
+    <div className="rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm">
+      <div className="grid grid-cols-5 gap-1 md:grid-cols-10">
         {HOME_CATEGORIES.map((c) => {
           const isActive = activeKey === c.key;
           const to =
@@ -17,14 +17,14 @@ export default function CategoryNav() {
             <Link
               key={c.key}
               to={to}
-              className={`flex flex-col items-center gap-1.5 rounded-xl px-2 py-3 text-center transition ${
+              className={`flex flex-col items-center gap-1 rounded-xl px-1.5 py-1.5 text-center transition ${
                 isActive
                   ? 'bg-rose-50 ring-1 ring-rose-200'
                   : 'hover:bg-rose-50'
               }`}
             >
               <span
-                className={`flex h-10 w-10 items-center justify-center rounded-full text-lg ${
+                className={`flex h-9 w-9 items-center justify-center rounded-full text-base ${
                   isActive ? 'bg-rose-100' : 'bg-slate-100'
                 }`}
               >

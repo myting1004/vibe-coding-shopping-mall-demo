@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import CategoryNav from '@/components/CategoryNav';
+import CategoryNavSection from '@/components/CategoryNavSection';
 import DiscountPrice from '@/components/DiscountPrice';
 import { useProducts } from '@/hooks/useProducts';
 import { HOME_CATEGORIES } from '@/lib/categories';
@@ -51,7 +51,7 @@ export default function ProductsPage() {
 
   return (
     <section className="space-y-4">
-      <CategoryNav />
+      <CategoryNavSection />
 
       <div className="flex items-end justify-between">
         <div>
